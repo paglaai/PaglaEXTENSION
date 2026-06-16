@@ -1,229 +1,195 @@
-# Capital Sin
+# Capital Sin Chrome Extension
 
-Private Chrome extension to export conversations from multiple AI platforms (ChatGPT, Grok, Gemini, DeepSeek, Qwen, and more) with deep customization and Gemini-powered AI tools. Supports Notion export, local downloads, attachments, screenshot, and advanced editing.
+![Capital Sin Logo](icons/icon128.png)
 
-## Features
+**A powerful and private Chrome extension for exporting and managing your AI conversations across multiple platforms.**
 
-- **Export**: Conversations to Notion, Google Drive, or as HTML, Markdown, PDF, and DOC.
-- **Customizations**: Rename participants, custom header/footer images, edit messages and timestamps.
-- **AI Agent (Gemini)**: Summarize, analyze, or rewrite chat with Gemini API (optional, never on by default).
-- **Attachments**: Add files (images, PDFs, Markdown) to transcript.
-- **Screenshots**: Capture full page or area and include/attach.
-- **Local first**: Nothing sent to APIs unless you opt in; all processing is local until export/upload.
+[![GitHub license](https://img.shields.io/github/license/paglagpt/capitalSIN?style=flat-square)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/paglagpt/capitalSIN?style=flat-square)](https://github.com/paglagpt/capitalSIN/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/paglagpt/capitalSIN?style=flat-square)](https://github.com/paglagpt/capitalSIN/network/members)
 
-**For private personal use only.**
+## ✨ Features
 
----
+Capital Sin provides a comprehensive suite of tools to manage your AI chat interactions:
 
-## Setup
+*   **Multi-Platform Compatibility**: Seamlessly export conversations from a wide range of AI platforms, including:
+    *   ChatGPT (chatgpt.com)
+    *   Grok (grok.com)
+    *   Gemini (gemini.google.com)
+    *   Google AI Studio (aistudio.google.com)
+    *   Qwen (qwen.ai / chat.qwenlm.ai)
+    *   DeepSeek (chat.deepseek.com)
+    *   Z.ai (z.ai)
+    *   MiniMax (hailuoai.com)
+    *   Xiaomi Mimo (mimo.mi.com)
+    *   LibreChat (generic support for common self-hosted patterns)
+    *   TogetherChat (chat.together.ai)
 
-1. Clone/download this repo.
-2. In Chrome, go to `chrome://extensions`, Developer Mode > Load Unpacked > Select this directory.
-3. (Optional) For Notion export: paste your integration token (https://www.notion.so/my-integrations).
-4. (Optional) For Gemini-powered analysis: paste your API key from Google AI Studio.
+*   **Flexible Export Options**:
+    *   **Local Downloads**: Export conversations as HTML, Markdown, PDF, and Microsoft Word (.doc) files.
+    *   **Cloud Integration**: Direct export capabilities to Notion and Google Drive for enhanced organization and sharing.
 
-## Privacy
+*   **Advanced Customization**:
+    *   **Participant Renaming**: Personalize your chat exports by renaming AI models and user names.
+    *   **Visual Enhancements**: Add custom header and footer images to your exported documents.
+    *   **Message Editing**: Modify individual message content and timestamps before export.
 
-No analytics, telemetry, or data leakage. Only you control where your chats and data go. No external calls unless you use Notion or Gemini export.
+*   **AI Agent (Gemini Integration)**:
+    *   Leverage the power of Gemini for optional AI-powered analysis directly within the extension.
+    *   **Summarize**: Get quick overviews of lengthy conversations.
+    *   **Analyze**: Gain insights into sentiment, key trends, and topics.
+    *   **Rewrite**: Rephrase conversations for clarity and conciseness.
+    *   **Custom Prompts**: Define your own AI tasks for tailored analysis.
 
----
+*   **Screenshot Functionality**: Capture full-page screenshots of your chat interfaces for visual documentation.
 
-## Usage
+*   **Privacy-First Approach**: All processing is local and nothing is sent to external APIs unless explicitly opted in. No analytics, telemetry, or data leakage.
 
-1. Go to [TogetherChat](https://chat.together.ai/).
-2. Click the extension icon.
-3. Set your preferences (names, header image, edits).
-4. Export to Notion or local file.
-
----
-
-## Features in Detail
-
-### 1. Customize Participants
-- Rename AI model/character
-- Rename your user name
-- Add custom profile/header images for each
-
-### 2. Edit & Enhance
-- Edit individual message content
-- Modify timestamps
-- Add custom header/footer images to export
-- Attach files (images, PDFs, Markdown)
-
-### 3. Export Options
-- **Notion**: Direct integration with Notion API
-- **Google Drive**: Save directly to your cloud storage
-- **HTML**: Styled, preserves layout
-- **Markdown**: Structured, code-friendly
-- **PDF**: Print-ready format
-- **DOC**: Microsoft Word compatible format
-
-### 4. AI Agent (Gemini)
-Optional AI-powered analysis:
-- **Summarize**: Quick overview of conversation
-- **Analyze**: Sentiment, key insights, trends
-- **Rewrite**: Concise or alternative phrasing
-- **Custom**: Your own prompt instructions
-
-### 5. Screenshots
-- Full page capture
-- Save as PNG attachment
-
----
-
-## Setup Instructions
+## 🚀 Setup Instructions
 
 ### Prerequisites
-- Google Chrome browser
-- (Optional) Notion integration token: https://www.notion.so/my-integrations
-- (Optional) Gemini API key: https://makersuite.google.com/
+
+*   Google Chrome browser
+*   (Optional) Notion integration token: [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations)
+*   (Optional) Gemini API key: [https://makersuite.google.com/](https://makersuite.google.com/)
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/nishidhho/capitalsin.git
-   cd capitalsin
-   ```
+1.  **Clone the repository**:
 
-2. **Load as Chrome Extension**
-   - Open `chrome://extensions/`
-   - Enable **Developer mode** (top right)
-   - Click **Load unpacked**
-   - Select the `capitalsin` folder
+    ```bash
+    git clone https://github.com/paglagpt/capitalSIN.git
+    cd capitalSIN
+    ```
 
-3. **Configure (Optional)**
-   - Click the Capital Sin icon in your Chrome toolbar
-   - Add Notion token for Notion exports
-   - Add Gemini API key for AI analysis
+2.  **Load as Chrome Extension**:
+
+    *   Open `chrome://extensions/` in your Chrome browser.
+    *   Enable **Developer mode** (toggle switch in the top right corner).
+    *   Click **Load unpacked**.
+    *   Select the `capitalSIN` folder that you cloned.
+
+3.  **Configure (Optional)**:
+
+    *   Click the **Capital Sin** icon in your Chrome toolbar.
+    *   Enter your Notion integration token for Notion exports.
+    *   Provide your Gemini API key for AI analysis features.
 
 ### First Run
 
-1. Go to [TogetherChat](https://chat.together.ai/)
-2. Have a conversation
-3. Click the Capital Sin extension icon
-4. Customize names/images if desired
-5. Choose export format (HTML/Markdown/PDF) or export to Notion
+1.  Navigate to any supported AI chat platform (e.g., [TogetherChat](https://chat.together.ai/)).
+2.  Engage in a conversation.
+3.  Click the **Capital Sin** extension icon in your Chrome toolbar.
+4.  Customize participant names or add images if desired.
+5.  Choose your preferred export format (HTML, Markdown, PDF, DOC) or export directly to Notion/Google Drive.
 
----
-
-## Configuration
+## ⚙️ Configuration
 
 ### Notion Setup
 
-1. Visit [Notion My Integrations](https://www.notion.so/my-integrations)
-2. Create a new integration
-3. Copy the integration token
-4. Paste in Capital Sin popup under "Notion Integration Token"
-5. (Optional) Add Notion Database ID to export to specific database
+1.  Visit [Notion My Integrations](https://www.notion.so/my-integrations).
+2.  Create a new integration and copy the integration token.
+3.  Paste the token into the **Capital Sin** popup under "Notion Token".
+4.  (Optional) Add a Notion Database ID to export to a specific database.
 
 ### Gemini Setup
 
-1. Visit [Google AI Studio](https://makersuite.google.com/)
-2. Create an API key
-3. Paste in Capital Sin popup under "Gemini API Key"
-4. Choose model and task, then click "Run Gemini"
+1.  Visit [Google AI Studio](https://makersuite.google.com/).
+2.  Create an API key.
+3.  Paste the API key into the **Capital Sin** popup under "Gemini API Key".
+4.  Choose your desired Gemini model and task, then click "Run Gemini".
 
----
+## 🔒 Privacy & Security
 
-## Privacy & Security
+*   **No Analytics**: We do not collect any usage data, telemetry, or analytics.
+*   **No Data Leakage**: All conversation processing occurs locally on your machine.
+*   **API Keys**: Your API keys are not stored persistently; they are kept in memory only during active use.
+*   **User Control**: Data is only sent to Notion or Gemini if you explicitly choose to use their export or analysis features.
+*   **Open Source**: The entire codebase is open for audit, ensuring transparency and trust.
 
-- **No analytics**: No tracking, no telemetry
-- **No data leakage**: All processing is local
-- **API keys are not stored**: Only kept in memory during use
-- **User control**: Data only sent to Notion/Gemini if you explicitly choose export/analysis
-- **Open source**: You can audit all code
-
----
-
-## File Structure
+## 📂 File Structure
 
 ```
-capitalsin/
-├── README.md                    # This file
-├── manifest.json               # Chrome extension manifest
-├── background.js               # Background service worker
-├── content.js                  # Content script for DOM extraction
-├── popup.html                  # Extension popup UI
-├── popup.js                    # Popup logic & handlers
-├── style.css                   # Styling
-├── notion_api.js              # Notion API integration
+capitalSIN/
+├── README.md                    # Project overview and documentation
+├── manifest.json               # Chrome extension manifest file
+├── background.js               # Background service worker for event handling
+├── content.js                  # Content script for DOM extraction from chat platforms
+├── popup.html                  # User interface for the extension popup
+├── popup.js                    # Logic and event handlers for the popup UI
+├── style.css                   # Styling for the extension popup
+├── notion_api.js              # Integration logic for Notion API
 ├── libs/
-│   └── html2pdf.bundle.min.js # PDF export library
+│   └── html2pdf.bundle.min.js # Library for PDF export functionality
 ├── icons/
-│   └── icon128.png            # Extension icon
-└── LICENSE                     # MIT License
+│   └── icon128.png            # Extension icon (128x128 pixels)
+└── LICENSE                     # MIT License details
 ```
 
----
-
-## Development & Customization
+## 🛠️ Development & Customization
 
 ### Adding New Platforms
 
-To support more chat platforms (e.g., ChatGPT, Gemini web):
+To extend support for additional AI chat platforms:
 
-1. Update `manifest.json` with new `host_permissions`
-2. Add platform-specific selectors in `content.js`
-3. Update `popup.html` with platform selector (optional)
+1.  Update `manifest.json` with the new platform's `host_permissions`.
+2.  Implement platform-specific DOM selectors and extraction logic within `content.js`.
+3.  (Optional) Update `popup.html` if platform-specific UI elements are required.
 
 ### Modifying DOM Selectors
 
-If TogetherChat changes their DOM, update selectors in `content.js`:
+If a supported platform changes its DOM structure, update the relevant selectors in `content.js`:
 
-```js
-const chatBubbles = document.querySelectorAll('.your-new-selector');
+```javascript
+const chatBubbles = document.querySelectorAll(".your-new-selector");
 ```
 
 ### Adding More Gemini Tasks
 
-Extend `popup.html` with new options and add logic in `popup.js`.
+To introduce new Gemini-powered analysis tasks:
 
----
+1.  Extend `popup.html` with new options in the Gemini task dropdown.
+2.  Add corresponding logic to `popup.js` to handle the new task and construct the appropriate prompt.
 
-## Troubleshooting
+## ❓ Troubleshooting
 
-### Extension not showing?
-- Reload Chrome
-- Check `chrome://extensions/` for errors
-- Ensure extension is enabled
+### Extension Not Showing?
 
-### Chat not extracting?
-- Open DevTools (F12) on TogetherChat
-- Inspect chat bubble elements
-- Update selectors in `content.js` to match current DOM
+*   Reload your Chrome browser.
+*   Check `chrome://extensions/` for any errors related to **Capital Sin**.
+*   Ensure **Capital Sin** is enabled in your extensions list.
 
-### Notion export failing?
-- Verify integration token is correct
-- Check database ID format (32 chars or UUID)
-- Ensure integration has permission to access database
+### Chat Not Extracting?
 
-### Gemini not responding?
-- Verify API key is valid
-- Check rate limits (free tier may have restrictions)
-- Try a simpler prompt
+*   Open Developer Tools (F12) on the AI chat page.
+*   Inspect the chat message elements to identify current DOM selectors.
+*   Update the selectors in `content.js` to match the platform's current structure.
 
----
+### Notion Export Failing?
 
-## License
+*   Verify that your Notion integration token is correct and active.
+*   Confirm the Notion Database ID (if used) is valid (32 characters or UUID format).
+*   Ensure your Notion integration has the necessary permissions to access the target database or page.
 
-MIT License - See LICENSE file for details.
+### Gemini Not Responding?
 
----
+*   Verify that your Gemini API key is valid and correctly entered.
+*   Check for any rate limits on your Gemini API usage (free tiers may have restrictions).
+*   Try a simpler prompt to rule out complexity issues.
 
-## Notes
+## 📜 License
 
-- This extension is **for private personal use only**
-- Not intended for public or marketplace distribution
-- You are responsible for your own API keys and credentials
-- Respect TogetherChat's terms of service when using this extension
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for full details.
 
----
+## 📝 Notes
 
-## Support & Feedback
+*   This extension is intended **for private personal use only**.
+*   It is not designed or intended for public distribution or marketplace listing.
+*   You are solely responsible for the management and security of your API keys and credentials.
+*   Please ensure compliance with the terms of service of any AI platform you use with this extension.
 
-For issues or improvements, check the code and feel free to modify for your needs.
+## 💬 Support & Feedback
 
----
+For any issues, suggestions, or contributions, please refer to the GitHub repository. Feel free to modify the code to suit your specific needs.
 
-**Last updated**: 2024
+**Last updated**: June 2026
