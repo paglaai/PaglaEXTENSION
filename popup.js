@@ -15,13 +15,23 @@ function fileToDataURL(file, fn) {
 // Fetch chat from content script
 function fetchChat(cb) {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-    if (!tabs[0]) return setStatus("Error: No active tab found.");
+    if (!tabs[0]) {
+      console.error("No active tab found.");
+      return setStatus("Error: No active tab found.");
+    }
+    console.log("Sending extract_chat message to tab:", tabs[0].id);
     chrome.tabs.sendMessage(tabs[0].id, {action: "extract_chat"}, response => {
-      if (response && response.chat) {
+      if (chrome.runtime.lastError) {
+        console.error("Runtime error:", chrome.runtime.lastError);
+        return setStatus("Error: " + chrome.runtime.lastError.message);
+      }
+      if (response && response.chat && response.chat.length > 0) {
+        console.log("Successfully extracted chat with", response.chat.length, "messages.");
         chat = response.chat;
         cb(chat);
       } else {
-        setStatus("Error: Could not extract chat. Make sure you're on a supported AI platform.");
+        console.warn("No chat messages extracted or invalid response:", response);
+        setStatus("Error: No chat messages found on this page.");
       }
     });
   });

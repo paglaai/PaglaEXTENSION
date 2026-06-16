@@ -19,26 +19,29 @@ function extractChat() {
 }
 
 function extractTogetherChat() {
-  const chatBubbles = document.querySelectorAll('.chat-message');
+  const chatBubbles = document.querySelectorAll('.chat-message, [class*="MessageContainer"]');
   const chat = [];
   chatBubbles.forEach(msg => {
-    const isUser = msg.classList.contains('user-message');
+    const isUser = msg.classList.contains('user-message') || msg.innerText.toLowerCase().includes('you');
     const sender = isUser ? 'You' : 'AI';
-    const messageHTML = msg.querySelector('.message-text')?.innerHTML || msg.innerHTML;
-    const messageMD = msg.querySelector('.message-text')?.innerText || msg.innerText;
-    const timestamp = msg.querySelector('.timestamp')?.innerText || '';
-    chat.push({ sender, messageHTML, messageMD, timestamp });
+    const content = msg.querySelector('.message-text, [class*="MessageContent"]') || msg;
+    chat.push({
+      sender,
+      messageHTML: content.innerHTML,
+      messageMD: content.innerText,
+      timestamp: msg.querySelector('.timestamp')?.innerText || ''
+    });
   });
   return chat;
 }
 
 function extractChatGPT() {
-  const turns = document.querySelectorAll('[data-testid^="conversation-turn-"]');
+  const turns = document.querySelectorAll('[data-testid^="conversation-turn-"], article');
   const chat = [];
   turns.forEach(turn => {
     const isUser = turn.querySelector('img[alt="User"]') || turn.innerText.includes('You');
     const sender = isUser ? 'You' : 'AI';
-    const contentEl = turn.querySelector('.markdown') || turn.querySelector('.prose') || turn;
+    const contentEl = turn.querySelector('.markdown, .prose, [data-message-author-role]') || turn;
     chat.push({
       sender,
       messageHTML: contentEl.innerHTML,
@@ -50,11 +53,11 @@ function extractChatGPT() {
 }
 
 function extractGrok() {
-  const containers = document.querySelectorAll('div[data-testid="message-container"]');
+  const containers = document.querySelectorAll('div[data-testid="message-container"], [class*="message_container"]');
   const chat = [];
   containers.forEach(msg => {
     const sender = msg.innerText.toLowerCase().includes('grok') ? 'AI' : 'You';
-    const content = msg.querySelector('div[dir="auto"]') || msg;
+    const content = msg.querySelector('div[dir="auto"], [class*="message_content"]') || msg;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -66,10 +69,10 @@ function extractGrok() {
 }
 
 function extractGemini() {
-  const messages = document.querySelectorAll('message-content');
+  const messages = document.querySelectorAll('message-content, .message-content, [class*="message_content"]');
   const chat = [];
   messages.forEach(msg => {
-    const isUser = msg.closest('.query-text');
+    const isUser = msg.closest('.query-text, .user-message');
     const sender = isUser ? 'You' : 'AI';
     chat.push({
       sender,
@@ -82,11 +85,11 @@ function extractGemini() {
 }
 
 function extractAIStudio() {
-  const entries = document.querySelectorAll('.chat-entry');
+  const entries = document.querySelectorAll('.chat-entry, .message-row');
   const chat = [];
   entries.forEach(entry => {
-    const sender = entry.classList.contains('user') ? 'You' : 'AI';
-    const content = entry.querySelector('.message-content') || entry;
+    const sender = entry.classList.contains('user') || entry.innerText.toLowerCase().includes('user') ? 'You' : 'AI';
+    const content = entry.querySelector('.message-content, .content') || entry;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -98,12 +101,12 @@ function extractAIStudio() {
 }
 
 function extractDeepSeek() {
-  const items = document.querySelectorAll('.ds-message-item');
+  const items = document.querySelectorAll('.ds-message-item, [class*="message_item"]');
   const chat = [];
   items.forEach(item => {
     const isUser = item.querySelector('.ds-icon--user') || item.innerText.includes('You');
     const sender = isUser ? 'You' : 'AI';
-    const content = item.querySelector('.ds-markdown') || item;
+    const content = item.querySelector('.ds-markdown, .ds-content, [class*="markdown"]') || item;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -115,11 +118,11 @@ function extractDeepSeek() {
 }
 
 function extractQwen() {
-  const items = document.querySelectorAll('.message-item');
+  const items = document.querySelectorAll('.message-item, .chat-message');
   const chat = [];
   items.forEach(item => {
-    const sender = item.classList.contains('user') ? 'You' : 'AI';
-    const content = item.querySelector('.content-wrapper') || item;
+    const sender = item.classList.contains('user') || item.innerText.toLowerCase().includes('user') ? 'You' : 'AI';
+    const content = item.querySelector('.content-wrapper, .message-content') || item;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -131,10 +134,10 @@ function extractQwen() {
 }
 
 function extractZAI() {
-  const bubbles = document.querySelectorAll('.message-bubble');
+  const bubbles = document.querySelectorAll('.message-bubble, .chat-item');
   const chat = [];
   bubbles.forEach(bubble => {
-    const sender = bubble.classList.contains('user') ? 'You' : 'AI';
+    const sender = bubble.classList.contains('user') || bubble.innerText.toLowerCase().includes('user') ? 'You' : 'AI';
     chat.push({
       sender,
       messageHTML: bubble.innerHTML,
@@ -146,11 +149,11 @@ function extractZAI() {
 }
 
 function extractMiniMax() {
-  const bubbles = document.querySelectorAll('.message-bubble');
+  const bubbles = document.querySelectorAll('.message-bubble, .chat-content-item');
   const chat = [];
   bubbles.forEach(bubble => {
-    const sender = bubble.classList.contains('user') ? 'You' : 'AI';
-    const content = bubble.querySelector('.chat-content') || bubble;
+    const sender = bubble.classList.contains('user') || bubble.innerText.toLowerCase().includes('user') ? 'You' : 'AI';
+    const content = bubble.querySelector('.chat-content, .content') || bubble;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -162,11 +165,11 @@ function extractMiniMax() {
 }
 
 function extractXiaomiMimo() {
-  const msgs = document.querySelectorAll('.chat-message');
+  const msgs = document.querySelectorAll('.chat-message, .message-item');
   const chat = [];
   msgs.forEach(msg => {
-    const sender = msg.classList.contains('user') ? 'You' : 'AI';
-    const content = msg.querySelector('.message-content') || msg;
+    const sender = msg.classList.contains('user') || msg.innerText.toLowerCase().includes('user') ? 'You' : 'AI';
+    const content = msg.querySelector('.message-content, .content') || msg;
     chat.push({
       sender,
       messageHTML: content.innerHTML,
@@ -178,8 +181,7 @@ function extractXiaomiMimo() {
 }
 
 function extractGeneric() {
-  // Very basic fallback: look for common markdown/prose classes
-  const possibleMessages = document.querySelectorAll('.markdown, .prose, .message-content, .chat-bubble');
+  const possibleMessages = document.querySelectorAll('.markdown, .prose, .message-content, .chat-bubble, .message');
   const chat = [];
   possibleMessages.forEach((msg, index) => {
     chat.push({
@@ -192,7 +194,6 @@ function extractGeneric() {
   return chat;
 }
 
-// Listen for popup's request
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "extract_chat") {
     sendResponse({ chat: extractChat() });
