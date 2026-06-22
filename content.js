@@ -1,4 +1,4 @@
-// DirtyCHAT - Content Script
+// Capital Sin - Content Script
 // Extracts conversations from multiple AI platforms
 
 function extractChat() {

@@ -4,20 +4,40 @@ function sendToNotion(token, dbOrPg, markdown, cb) {
   // dbOrPg: either database_id, page_id, or blank
   const url = "https://api.notion.com/v1/pages";
   
+  if (!dbOrPg) {
+    return cb(false, "Database ID or Page ID is required");
+  }
+
   // Determine parent type
   let parent = {};
-  if (dbOrPg) {
-    // Check if it looks like a database ID or page ID
-    if (dbOrPg.length === 32 || dbOrPg.includes('-')) {
-      parent = {database_id: dbOrPg};
-    } else {
-      parent = {page_id: dbOrPg};
-    }
+  if (dbOrPg.length === 32 || (dbOrPg.includes('-') && dbOrPg.length === 36)) {
+    parent = {database_id: dbOrPg.replace(/-/g, '')};
   } else {
-    // Default to workspace (may not work with all tokens, database_id recommended)
-    parent = {workspace: true};
+    parent = {page_id: dbOrPg};
   }
   
+  // Split markdown into 2000 character chunks for rich_text blocks
+  const MAX_CHUNK_SIZE = 2000;
+  const chunks = [];
+  for (let i = 0; i < markdown.length; i += MAX_CHUNK_SIZE) {
+    chunks.push(markdown.substring(i, i + MAX_CHUNK_SIZE));
+  }
+
+  const children = chunks.map(chunk => ({
+    object: "block",
+    type: "paragraph",
+    paragraph: {
+      rich_text: [
+        {
+          type: "text",
+          text: {
+            content: chunk
+          }
+        }
+      ]
+    }
+  }));
+
   // Build Notion page payload
   const payload = {
     parent: parent,
@@ -26,28 +46,13 @@ function sendToNotion(token, dbOrPg, markdown, cb) {
         title: [
           {
             text: {
-              content: "TogetherChat Export - " + new Date().toLocaleString()
+              content: "Capital Sin Export - " + new Date().toLocaleString()
             }
           }
         ]
       }
     },
-    children: [
-      {
-        object: "block",
-        type: "paragraph",
-        paragraph: {
-          rich_text: [
-            {
-              type: "text",
-              text: {
-                content: markdown
-              }
-            }
-          ]
-        }
-      }
-    ]
+    children: children
   };
   
   fetch(url, {
