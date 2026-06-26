@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DirtyCHAT",
+  "name": "Capital Sin",
   "description": "Privately export conversations from multiple AI platforms with customization, Gemini, and Notion API.",
   "version": "1.1.0",
   "permissions": [

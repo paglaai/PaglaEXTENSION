@@ -1,4 +1,4 @@
-// DirtyCHAT - Popup Logic
+// Capital Sin - Popup Logic
 
 let chat = [];
 let aiName = "AI", userName = "You";
@@ -59,12 +59,14 @@ document.getElementById('attach-file').onchange = e => {
 
 // Build HTML export
 function buildHTML(chat, opts={}) {
-  let html = `<html><head><meta charset="UTF-8"><title>DirtyCHAT Export</title>
+  let html = `<html><head><meta charset="UTF-8"><title>Capital Sin Export</title>
     <style>
     body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;}
     .chat-container{max-width:800px;margin:auto;background:white;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-    .msg-You{background:#bdf3fa;margin:12px 0;padding:12px;border-radius:8px;text-align:right;}
-    .msg-AI{background:#ecebfd;margin:12px 0;padding:12px;border-radius:8px;}
+    .msg-You{background:#bdf3fa;margin:12px 0;padding:12px;border-radius:8px;text-align:right;display:flex;flex-direction:row-reverse;align-items:flex-start;}
+    .msg-AI{background:#ecebfd;margin:12px 0;padding:12px;border-radius:8px;display:flex;align-items:flex-start;}
+    .avatar{width:40px;height:40px;border-radius:50%;margin:0 10px;flex-shrink:0;background:#eee;object-fit:cover;}
+    .msg-content{flex-grow:1;}
     .sender{font-weight:bold;margin-bottom:4px;}
     .timestamp{font-size:0.8em;color:#999;margin-top:4px;}
     .attachments{margin-top:20px;padding-top:20px;border-top:1px solid #ccc;}
@@ -75,10 +77,15 @@ function buildHTML(chat, opts={}) {
   html += `<div class="chat-container">`;
   
   chat.forEach(m => {
-    html += `<div class="msg-${m.sender === userName ? 'You' : 'AI'}">
-      <div class="sender">${m.sender}</div>
-      <div class="text">${m.messageHTML}</div>
-      ${m.timestamp ? `<div class="timestamp">${m.timestamp}</div>` : ""}
+    const isUser = m.sender === (opts.userName || "You");
+    const avatar = isUser ? opts.userImg : opts.aiImg;
+    html += `<div class="msg-${isUser ? 'You' : 'AI'}">
+      ${avatar ? `<img src="${avatar}" class="avatar">` : '<div class="avatar" style="display:none"></div>'}
+      <div class="msg-content">
+        <div class="sender">${m.sender}</div>
+        <div class="text">${m.messageHTML}</div>
+        ${m.timestamp ? `<div class="timestamp">${m.timestamp}</div>` : ""}
+      </div>
     </div>`;
   });
 
@@ -95,7 +102,7 @@ function buildHTML(chat, opts={}) {
 
 // Build Markdown export
 function buildMarkdown(chat) {
-  let md = `# DirtyCHAT Export\n\n`;
+  let md = `# Capital Sin Export\n\n`;
   md += `**Exported:** ${new Date().toLocaleString()}\n\n`;
   
   chat.forEach((m) => {
@@ -117,18 +124,18 @@ function downloadFile(name, type, data) {
 
 // Export handlers
 document.getElementById('export-html').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    downloadFile('dirtychat-' + Date.now() + '.html', 'text/html', html);
+  fetchChat(async c => {
+    const c_edited = await applyEdits(c);
+    const html = buildHTML(c_edited, {headerImg, footerImg, aiImg, userImg, userName});
+    downloadFile('capitalsin-' + Date.now() + '.html', 'text/html', html);
     setStatus('✓ HTML exported');
   });
 
 document.getElementById('export-md').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
+  fetchChat(async c => {
+    const c_edited = await applyEdits(c);
     const md = buildMarkdown(c_edited);
-    downloadFile('dirtychat-' + Date.now() + '.md', 'text/markdown', md);
+    downloadFile('capitalsin-' + Date.now() + '.md', 'text/markdown', md);
     setStatus('✓ Markdown exported');
   });
 
@@ -136,16 +143,16 @@ document.getElementById('export-pdf').onclick = async () => {
   setStatus("Loading PDF engine...");
   try {
     await loadScript('libs/html2pdf.bundle.min.js');
-    fetchChat(c => {
-      const c_edited = applyEdits(c);
-      const html = buildHTML(c_edited, {headerImg, footerImg});
+    fetchChat(async c => {
+      const c_edited = await applyEdits(c);
+      const html = buildHTML(c_edited, {headerImg, footerImg, aiImg, userImg, userName});
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
       document.body.appendChild(iframe);
       iframe.contentDocument.open();
       iframe.contentDocument.write(html);
       iframe.contentDocument.close();
-      html2pdf().from(iframe.contentDocument.body).save('dirtychat-' + Date.now() + '.pdf');
+      html2pdf().from(iframe.contentDocument.body).save('capitalsin-' + Date.now() + '.pdf');
       setTimeout(()=>document.body.removeChild(iframe),2000);
       setStatus('✓ PDF export triggered');
     });
@@ -155,14 +162,14 @@ document.getElementById('export-pdf').onclick = async () => {
 };
 
 document.getElementById('export-doc').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
+  fetchChat(async c => {
+    const c_edited = await applyEdits(c);
+    const html = buildHTML(c_edited, {headerImg, footerImg, aiImg, userImg, userName});
     const docContent = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head><meta charset='utf-8'><title>Export DOC</title></head>
       <body>${html}</body></html>`;
-    downloadFile('dirtychat-' + Date.now() + '.doc', 'application/msword', docContent);
+    downloadFile('capitalsin-' + Date.now() + '.doc', 'application/msword', docContent);
     setStatus('✓ DOC exported');
   });
 
@@ -170,7 +177,7 @@ document.getElementById('export-doc').onclick = () =>
 document.getElementById('screenshot-full').onclick = () => {
   chrome.tabs.captureVisibleTab(null, {format: "png"}, dataUrl => {
     if (dataUrl) {
-      downloadFile("screenshot-" + Date.now() + ".png", "image/png", atob(dataUrl.split(',')[1]));
+      chrome.downloads.download({ url: dataUrl, filename: "screenshot-" + Date.now() + ".png" });
       setStatus('✓ Screenshot saved');
     } else {
       setStatus('Error: Could not capture screenshot');
@@ -180,13 +187,15 @@ document.getElementById('screenshot-full').onclick = () => {
 
 // Edit messages (JSON editor)
 document.getElementById('edit-messages').onclick = () =>
-  fetchChat(chat => {
-    const edits = prompt("Edit chat as JSON (advanced):\n[{sender, messageMD, timestamp}]", JSON.stringify(chat,null,2));
+  fetchChat(async chat => {
+    const currentEdits = await applyEdits(chat);
+    const edits = prompt("Edit chat as JSON (advanced):\n[{sender, messageMD, timestamp}]", JSON.stringify(currentEdits,null,2));
     if (edits) {
       try {
         JSON.parse(edits); // Validate JSON
-        localStorage.setItem("customChat", edits);
-        setStatus('✓ Messages saved for edit');
+        chrome.storage.local.set({"customChat": edits}, () => {
+          setStatus('✓ Messages saved for edit');
+        });
       } catch(e) {
         setStatus('✗ Invalid JSON');
       }
@@ -194,9 +203,10 @@ document.getElementById('edit-messages').onclick = () =>
   });
 
 // Apply edits and custom names
-function applyEdits(chat) {
+async function applyEdits(chat) {
   try {
-    const cc = JSON.parse(localStorage.getItem("customChat")||"[]");
+    const data = await chrome.storage.local.get("customChat");
+    const cc = JSON.parse(data.customChat || "[]");
     if(cc && cc.length) {
       return cc;
     }
@@ -212,7 +222,7 @@ document.getElementById('to-notion').onclick = async () => {
   setStatus("Loading Notion API...");
   try {
     await loadScript('notion_api.js');
-    fetchChat(c => {
+    fetchChat(async c => {
       setStatus("Exporting to Notion...");
       const token = document.getElementById('notion-token').value.trim();
       const db = document.getElementById('notion-db').value.trim();
@@ -220,7 +230,8 @@ document.getElementById('to-notion').onclick = async () => {
         setStatus("✗ Please enter Notion integration token");
         return;
       }
-      sendToNotion(token, db, buildMarkdown(applyEdits(c)), (ok,msg) =>
+      const editedChat = await applyEdits(c);
+      sendToNotion(token, db, buildMarkdown(editedChat), (ok,msg) =>
         setStatus(ok?"✓ Exported to Notion":("✗ "+(msg||"Error")))
       );
     });
@@ -264,7 +275,8 @@ document.getElementById('gemini-run').onclick = async () => {
     else if (task === 'rewrite') instruction = 'Rewrite this conversation, making it clear, concise, and easy to understand.';
     else instruction = customPrompt || 'Interpret this conversation as you see fit.';
 
-    const chatText = applyEdits(chat).map(m => `${m.sender}: ${m.messageMD}`).join('\n');
+    const editedChat = await applyEdits(chat);
+    const chatText = editedChat.map(m => `${m.sender}: ${m.messageMD}`).join('\n');
     const prompt = `${instruction}\n\n${chatText}`;
 
     try {
