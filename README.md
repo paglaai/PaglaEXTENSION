@@ -1,195 +1,143 @@
-# Capital Sin Chrome Extension
+# PaglaEXTENSION
 
-![Capital Sin Logo](icons/icon128.png)
+> Universal AI conversation exporter, session sanitizer, and local knowledge bridge for the PaglaAI ecosystem.
 
-**A powerful and private Chrome extension for exporting and managing your AI conversations across multiple platforms.**
+---
 
-[![GitHub license](https://img.shields.io/github/license/paglagpt/capitalSIN?style=flat-square)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/paglagpt/capitalSIN?style=flat-square)](https://github.com/paglagpt/capitalSIN/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/paglagpt/capitalSIN?style=flat-square)](https://github.com/paglagpt/capitalSIN/network/members)
+## What is PaglaEXTENSION?
 
-## ✨ Features
+PaglaEXTENSION is the browser knowledge bridge for the **PaglaAI** ecosystem, built as a modern Chrome Extension (Manifest V3).
 
-Capital Sin provides a comprehensive suite of tools to manage your AI chat interactions:
+It is not simply a page scraper or screenshot taker.
 
-*   **Multi-Platform Compatibility**: Seamlessly export conversations from a wide range of AI platforms, including:
-    *   ChatGPT (chatgpt.com)
-    *   Grok (grok.com)
-    *   Gemini (gemini.google.com)
-    *   Google AI Studio (aistudio.google.com)
-    *   Qwen (qwen.ai / chat.qwenlm.ai)
-    *   DeepSeek (chat.deepseek.com)
-    *   Z.ai (z.ai)
-    *   MiniMax (hailuoai.com)
-    *   Xiaomi Mimo (mimo.mi.com)
-    *   LibreChat (generic support for common self-hosted patterns)
-    *   TogetherChat (chat.together.ai)
+It is a private, client-side intelligence companion designed to capture, sanitize, and structure AI conversations from every major frontier model interface (ChatGPT, Grok, Google Gemini, Google AI Studio, Alibaba Qwen, DeepSeek, and TogetherChat) into clean, standard Markdown, local files, and Notion knowledge graphs.
 
-*   **Flexible Export Options**:
-    *   **Local Downloads**: Export conversations as HTML, Markdown, PDF, and Microsoft Word (.doc) files.
-    *   **Cloud Integration**: Direct export capabilities to Notion and Google Drive for enhanced organization and sharing.
+With PaglaEXTENSION, your interactions with cloud AI models are preserved privately on your own machine, allowing seamless ingestion into local RAG systems, PaglaMLX, or personal knowledge bases.
 
-*   **Advanced Customization**:
-    *   **Participant Renaming**: Personalize your chat exports by renaming AI models and user names.
-    *   **Visual Enhancements**: Add custom header and footer images to your exported documents.
-    *   **Message Editing**: Modify individual message content and timestamps before export.
+---
 
-*   **AI Agent (Gemini Integration)**:
-    *   Leverage the power of Gemini for optional AI-powered analysis directly within the extension.
-    *   **Summarize**: Get quick overviews of lengthy conversations.
-    *   **Analyze**: Gain insights into sentiment, key trends, and topics.
-    *   **Rewrite**: Rephrase conversations for clarity and conciseness.
-    *   **Custom Prompts**: Define your own AI tasks for tailored analysis.
+## Purpose
 
-*   **Screenshot Functionality**: Capture full-page screenshots of your chat interfaces for visual documentation.
+The purpose of this repository is to liberate conversational data from closed web interfaces and return ownership to the user.
 
-*   **Privacy-First Approach**: All processing is local and nothing is sent to external APIs unless explicitly opted in. No analytics, telemetry, or data leakage.
+This repository governs:
 
-## 🚀 Setup Instructions
+- Manifest V3 Chrome Extension architecture
+- Multi-Platform DOM extraction engines (ChatGPT, Grok, Gemini, Qwen, DeepSeek)
+- Clean Markdown, HTML, PDF, and Word export pipelines
+- Direct Notion Database synchronization via Notion API
+- Client-Side Privacy Sanitization (zero third-party tracking or data leakage)
+- Optional Gemini-powered synthesis, rephrasing, and structured key point extraction
+- Local-first knowledge bridging into the PaglaAI stack
+
+---
+
+## Ecosystem
+
+PaglaEXTENSION connects web-based frontier models to the PaglaAI ecosystem:
+
+- **PaglaSPACE** — Showcased on the ecosystem products page at `/products/`.
+- **PaglaDESIGN** — Follows the DesignDNA visual standard for extension popups and typography.
+- **PaglaMLX** — Exports conversations directly into datasets for local model fine-tuning and prompting.
+- **PaglaSHELL** — Formats exported conversation transcripts for terminal agent ingestion.
+- **PaglaGPT** — Bridges high-level chat reasoning into architectural PRDs and documentation.
+
+---
+
+## Design Philosophy
+
+In accordance with **PaglaDESIGN** and **DesignDNA**:
+
+- **Privacy by Default:** All DOM processing occurs entirely in the browser runtime. Zero external telemetry, tracking, or unexpected analytics.
+- **Data Portability:** Raw conversation data is converted into open, standard Markdown with clean metadata.
+- **Scoped Permissions:** Host permissions and storage access are scoped strictly to target AI web applications.
+- **Clean Interface:** Compact popup UI utilizing Pagla Sans typography and monochrome focus states.
+
+---
+
+## Repository Structure
+
+```
+PaglaEXTENSION/
+
+README.md                  — repository purpose, architecture, and installation guide
+LICENSE                    — MIT license
+manifest.json              — Chrome Extension Manifest V3 configuration
+
+background.js              — background service worker for life-cycle and event routing
+content.js                 — platform-specific DOM parsing and text extraction engines
+popup.html                 — extension popup user interface
+popup.js                   — export orchestration, format conversions, and API handlers
+style.css                  — DesignDNA styling for extension popup
+notion_api.js              — client-side Notion API integration
+
+icons/                     — extension iconography
+  icon128.png              — 128x128 brand mark
+
+libs/                      — bundled client-side utilities
+  html2pdf.bundle.min.js   — local PDF generation library
+```
+
+---
+
+## Workflow
+
+PaglaEXTENSION development adheres to the PaglaAI lifecycle:
+
+```
+Vision
+    ↓
+Research
+    ↓
+Documentation
+    ↓
+Design
+    ↓
+Review
+    ↓
+Prototype
+    ↓
+Implementation
+```
+
+All updates are tested against live web interfaces across Google Chrome and Chromium-based browsers.
+
+---
+
+## Quickstart
 
 ### Prerequisites
 
-*   Google Chrome browser
-*   (Optional) Notion integration token: [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations)
-*   (Optional) Gemini API key: [https://makersuite.google.com/](https://makersuite.google.com/)
+- Google Chrome, Brave, Arc, or any Chromium-based browser
+- (Optional) Notion API Integration Token for direct Notion sync
+- (Optional) Gemini API Key for on-device AI summarization
 
 ### Installation
 
-1.  **Clone the repository**:
+1. Clone or download this repository:
+   ```bash
+   git clone https://github.com/paglaai/PaglaEXTENSION.git
+   cd PaglaEXTENSION
+   ```
+2. Open Google Chrome and navigate to:
+   ```
+   chrome://extensions/
+   ```
+3. Enable **Developer mode** using the toggle switch in the upper right corner.
+4. Click **Load unpacked** and select the cloned `PaglaEXTENSION` directory.
+5. Pin PaglaEXTENSION to your Chrome toolbar.
 
-    ```bash
-    git clone https://github.com/paglagpt/capitalSIN.git
-    cd capitalSIN
-    ```
+### Usage
 
-2.  **Load as Chrome Extension**:
+1. Open any supported AI chat interface (e.g., ChatGPT, Grok, Gemini, DeepSeek, Qwen).
+2. Click the **PaglaEXTENSION** icon in the toolbar.
+3. Choose your desired export format (Markdown, HTML, PDF, or Notion).
+4. Download the file locally or sync to your workspace in one click.
 
-    *   Open `chrome://extensions/` in your Chrome browser.
-    *   Enable **Developer mode** (toggle switch in the top right corner).
-    *   Click **Load unpacked**.
-    *   Select the `capitalSIN` folder that you cloned.
+---
 
-3.  **Configure (Optional)**:
+## Governance & License
 
-    *   Click the **Capital Sin** icon in your Chrome toolbar.
-    *   Enter your Notion integration token for Notion exports.
-    *   Provide your Gemini API key for AI analysis features.
+PaglaEXTENSION is developed and maintained by **AYNAGHOR** (The House of Mirror) for the PaglaAI ecosystem.
 
-### First Run
-
-1.  Navigate to any supported AI chat platform (e.g., [TogetherChat](https://chat.together.ai/)).
-2.  Engage in a conversation.
-3.  Click the **Capital Sin** extension icon in your Chrome toolbar.
-4.  Customize participant names or add images if desired.
-5.  Choose your preferred export format (HTML, Markdown, PDF, DOC) or export directly to Notion/Google Drive.
-
-## ⚙️ Configuration
-
-### Notion Setup
-
-1.  Visit [Notion My Integrations](https://www.notion.so/my-integrations).
-2.  Create a new integration and copy the integration token.
-3.  Paste the token into the **Capital Sin** popup under "Notion Token".
-4.  (Optional) Add a Notion Database ID to export to a specific database.
-
-### Gemini Setup
-
-1.  Visit [Google AI Studio](https://makersuite.google.com/).
-2.  Create an API key.
-3.  Paste the API key into the **Capital Sin** popup under "Gemini API Key".
-4.  Choose your desired Gemini model and task, then click "Run Gemini".
-
-## 🔒 Privacy & Security
-
-*   **No Analytics**: We do not collect any usage data, telemetry, or analytics.
-*   **No Data Leakage**: All conversation processing occurs locally on your machine.
-*   **API Keys**: Your API keys are not stored persistently; they are kept in memory only during active use.
-*   **User Control**: Data is only sent to Notion or Gemini if you explicitly choose to use their export or analysis features.
-*   **Open Source**: The entire codebase is open for audit, ensuring transparency and trust.
-
-## 📂 File Structure
-
-```
-capitalSIN/
-├── README.md                    # Project overview and documentation
-├── manifest.json               # Chrome extension manifest file
-├── background.js               # Background service worker for event handling
-├── content.js                  # Content script for DOM extraction from chat platforms
-├── popup.html                  # User interface for the extension popup
-├── popup.js                    # Logic and event handlers for the popup UI
-├── style.css                   # Styling for the extension popup
-├── notion_api.js              # Integration logic for Notion API
-├── libs/
-│   └── html2pdf.bundle.min.js # Library for PDF export functionality
-├── icons/
-│   └── icon128.png            # Extension icon (128x128 pixels)
-└── LICENSE                     # MIT License details
-```
-
-## 🛠️ Development & Customization
-
-### Adding New Platforms
-
-To extend support for additional AI chat platforms:
-
-1.  Update `manifest.json` with the new platform's `host_permissions`.
-2.  Implement platform-specific DOM selectors and extraction logic within `content.js`.
-3.  (Optional) Update `popup.html` if platform-specific UI elements are required.
-
-### Modifying DOM Selectors
-
-If a supported platform changes its DOM structure, update the relevant selectors in `content.js`:
-
-```javascript
-const chatBubbles = document.querySelectorAll(".your-new-selector");
-```
-
-### Adding More Gemini Tasks
-
-To introduce new Gemini-powered analysis tasks:
-
-1.  Extend `popup.html` with new options in the Gemini task dropdown.
-2.  Add corresponding logic to `popup.js` to handle the new task and construct the appropriate prompt.
-
-## ❓ Troubleshooting
-
-### Extension Not Showing?
-
-*   Reload your Chrome browser.
-*   Check `chrome://extensions/` for any errors related to **Capital Sin**.
-*   Ensure **Capital Sin** is enabled in your extensions list.
-
-### Chat Not Extracting?
-
-*   Open Developer Tools (F12) on the AI chat page.
-*   Inspect the chat message elements to identify current DOM selectors.
-*   Update the selectors in `content.js` to match the platform's current structure.
-
-### Notion Export Failing?
-
-*   Verify that your Notion integration token is correct and active.
-*   Confirm the Notion Database ID (if used) is valid (32 characters or UUID format).
-*   Ensure your Notion integration has the necessary permissions to access the target database or page.
-
-### Gemini Not Responding?
-
-*   Verify that your Gemini API key is valid and correctly entered.
-*   Check for any rate limits on your Gemini API usage (free tiers may have restrictions).
-*   Try a simpler prompt to rule out complexity issues.
-
-## 📜 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for full details.
-
-## 📝 Notes
-
-*   This extension is intended **for private personal use only**.
-*   It is not designed or intended for public distribution or marketplace listing.
-*   You are solely responsible for the management and security of your API keys and credentials.
-*   Please ensure compliance with the terms of service of any AI platform you use with this extension.
-
-## 💬 Support & Feedback
-
-For any issues, suggestions, or contributions, please refer to the GitHub repository. Feel free to modify the code to suit your specific needs.
-
-**Last updated**: June 2026
+Released under the **MIT License**.
