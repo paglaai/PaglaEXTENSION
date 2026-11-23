@@ -38,6 +38,8 @@ A capture must preserve source order and distinguish observed facts from unavail
 
 This branch establishes the architecture and design-system contract. It does not yet represent a deployed Convex backend or a verified multi-browser release.
 
+The first capture-core increment now includes a shared, versioned conversation record and serializers for **JSON, Markdown, HTML, plain text, and CSV**. All five formats are generated from the same normalized capture. The legacy adapters still report completeness and speaker identity as unverified; the new schema deliberately preserves unknown roles instead of silently asserting them. PDF and DOCX remain unavailable until real document generators are implemented and tested.
+
 The next implementation milestones are:
 
 1. Establish the extension build and test pipeline without discarding useful legacy extraction behavior.
