@@ -1,4 +1,4 @@
-// Capital Sin - Popup Logic
+// PaglaEXTENSION - Popup Logic
 
 let chat = [];
 let aiName = "AI", userName = "You";
@@ -106,54 +106,45 @@ function buildMarkdown(chat) {
 
 // Download utility
 function downloadFile(name, type, data) {
-  const blob = new Blob([data], {type});
+  const blob = new Blob([data], { type });
   const url = URL.createObjectURL(blob);
-  chrome.downloads.download({ url, filename: name });
+  chrome.downloads.download({ url, filename: name, saveAs: true }, () => {
+    if (chrome.runtime.lastError) setStatus('Download failed: ' + chrome.runtime.lastError.message);
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+  });
 }
 
-// Export handlers
-document.getElementById('export-html').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    downloadFile('capitalsin-' + Date.now() + '.pdf', 'text/pdf', html);
-    setStatus('✓ HTML exported');
+// Build one canonical capture; every exporter consumes this same normalized record.
+function buildNormalizedCapture(rawChat) {
+  const tab = window.__paglaActiveTab || {};
+  const host = (() => { try { return new URL(tab.url || '').hostname; } catch (_) { return 'unknown'; } })();
+  return PaglaCaptureCore.normalizeCapture({
+    source: { platformId: host || 'unknown', interfaceId: host || 'unknown', url: tab.url || '', title: tab.title || '', capturedAt: new Date().toISOString(), adapterVersion: 'legacy-adapter-unverified' },
+    completeness: { status: 'unknown', reasons: ['Legacy adapter capture completeness has not yet been verified.'] },
+    messages: applyEdits(rawChat)
   });
+}
 
-document.getElementById('export-md').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const md = buildMarkdown(c_edited);
-    downloadFile('capitalsin-' + Date.now() + '.md', 'text/markdown', md);
-    setStatus('✓ Markdown exported');
+function exportCapture(format, extension, mimeType) {
+  fetchChat((rawChat) => {
+    try {
+      const capture = buildNormalizedCapture(rawChat);
+      const data = PaglaCaptureCore.serialize(capture, format);
+      downloadFile('paglaextension-' + Date.now() + '.' + extension, mimeType, data);
+      setStatus('Export prepared: ' + extension.toUpperCase());
+    } catch (error) {
+      console.error('Export failed:', error);
+      setStatus('Export failed: ' + error.message);
+    }
   });
+}
 
-document.getElementById('export-pdf').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html);
-    iframe.contentDocument.close();
-    html2pdf().from(iframe.contentDocument.body).save('dirtychat-' + Date.now() + '.pdf');
-    setTimeout(()=>document.body.removeChild(iframe),2000);
-    setStatus('✓ PDF export triggered');
-  });
-
-document.getElementById('export-doc').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    const docContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta charset='utf-8'><title>Export DOC</title></head>
-      <body>${html}</body></html>`;
-    downloadFile('capitalsin-' + Date.now() + '.doc', 'application/msword', docContent);
-    setStatus('✓ DOC exported');
-  });
+// Multi-format serializers operate on the same normalized capture record.
+document.getElementById('export-html').onclick = () => exportCapture('html', 'html', 'text/html;charset=utf-8');
+document.getElementById('export-md').onclick = () => exportCapture('markdown', 'md', 'text/markdown;charset=utf-8');
+document.getElementById('export-json').onclick = () => exportCapture('json', 'json', 'application/json;charset=utf-8');
+document.getElementById('export-txt').onclick = () => exportCapture('text', 'txt', 'text/plain;charset=utf-8');
+document.getElementById('export-csv').onclick = () => exportCapture('csv', 'csv', 'text/csv;charset=utf-8');
 
 // Screenshot full page
 document.getElementById('screenshot-full').onclick = () => {
