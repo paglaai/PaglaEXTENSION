@@ -196,7 +196,35 @@ function extractGeneric() {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "extract_chat") {
-    sendResponse({ chat: extractChat() });
+    const legacyMessages = extractChat();
+    const host = window.location.hostname || "unknown";
+    const capture = PaglaCaptureCore.normalizeCapture({
+      source: {
+        platformId: host,
+        interfaceId: host,
+        url: window.location.href,
+        title: document.title,
+        capturedAt: new Date().toISOString(),
+        adapterVersion: "legacy-dom-selectors-unverified"
+      },
+      completeness: {
+        status: "unknown",
+        reasons: [
+          "Legacy DOM selectors have not been validated against current platform fixtures.",
+          "The page may virtualize or omit messages that are not currently loaded."
+        ]
+      },
+      messages: legacyMessages.map((message, index) => ({
+        ...message,
+        id: host + "-legacy-" + index,
+        sequence: index,
+        role: "unknown",
+        authorLabel: "Unverified · " + (message.sender || "Speaker"),
+        roleConfidence: "unknown",
+        roleEvidence: "Legacy adapter heuristic; role attribution has not been verified."
+      }))
+    });
+    sendResponse({ chat: legacyMessages, capture });
   }
   return true;
 });
