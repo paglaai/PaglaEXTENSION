@@ -40,6 +40,18 @@ The normalized record is versioned and independent of any provider's DOM:
 
 Provider-specific DOM fragments are not the canonical data model. Raw HTML is not trusted as safe export content and must be sanitized before rendering.
 
+### Multi-format serialization
+
+The canonical capture record is serialized through one shared formatter layer. The initial implemented format targets are:
+
+- JSON — loss-minimizing canonical record interchange
+- Markdown — readable transcript with code blocks and capture metadata
+- HTML — semantic, escaped HTML; source-page markup is never injected directly
+- Plain text — portable linear transcript
+- CSV — message-level rows for spreadsheet analysis
+
+PDF and DOCX are separate document-generation targets, not alternate filename extensions. They must use actual PDF and Office document generation and will not be reported as supported until those generators are present and tested.
+
 ## 5. Local-first and Convex boundary
 
 **Full conversation content remains local by default.** IndexedDB is the initial archive for normalized capture payloads. A user must preview and explicitly approve any transfer to a PaglaAI destination.
