@@ -27,8 +27,9 @@ function fetchChat(cb) {
         return setStatus("Error: " + chrome.runtime.lastError.message);
       }
       if (response && response.chat && response.chat.length > 0) {
-        console.log("Successfully extracted chat with", response.chat.length, "messages.");
+        console.log("Extracted", response.chat.length, "messages; legacy speaker labels remain unverified.");
         chat = response.chat;
+        window.__paglaCapture = response.capture || null;
         cb(chat);
       } else {
         console.warn("No chat messages extracted or invalid response:", response);
@@ -117,12 +118,30 @@ function downloadFile(name, type, data) {
 
 // Build one canonical capture; every exporter consumes this same normalized record.
 function buildNormalizedCapture(rawChat) {
+  if (window.__paglaCapture) return PaglaCaptureCore.normalizeCapture(window.__paglaCapture);
   const tab = window.__paglaActiveTab || {};
-  const host = (() => { try { return new URL(tab.url || '').hostname; } catch (_) { return 'unknown'; } })();
+  const host = (() => { try { return new URL(tab.url || "").hostname; } catch (_) { return "unknown"; } })();
   return PaglaCaptureCore.normalizeCapture({
-    source: { platformId: host || 'unknown', interfaceId: host || 'unknown', url: tab.url || '', title: tab.title || '', capturedAt: new Date().toISOString(), adapterVersion: 'legacy-adapter-unverified' },
-    completeness: { status: 'unknown', reasons: ['Legacy adapter capture completeness has not yet been verified.'] },
-    messages: applyEdits(rawChat)
+    source: {
+      platformId: host || "unknown",
+      interfaceId: host || "unknown",
+      url: tab.url || "",
+      title: tab.title || "",
+      capturedAt: new Date().toISOString(),
+      adapterVersion: "legacy-adapter-unverified"
+    },
+    completeness: {
+      status: "unknown",
+      reasons: ["Legacy adapter capture completeness has not yet been verified."]
+    },
+    messages: rawChat.map((message, index) => ({
+      ...message,
+      role: "unknown",
+      authorLabel: "Unverified speaker",
+      roleConfidence: "unknown",
+      roleEvidence: "Legacy adapter role attribution has not been validated.",
+      sequence: index
+    }))
   });
 }
 
