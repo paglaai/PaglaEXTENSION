@@ -55,57 +55,6 @@ document.getElementById('attach-file').onchange = e => {
   setStatus(`Attached ${e.target.files.length} file(s)`);
 };
 
-// Build HTML export
-function buildHTML(chat, opts={}) {
-  let html = `<html><head><meta charset="UTF-8"><title>Capital Sin Export</title>
-    <style>
-    body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;}
-    .chat-container{max-width:800px;margin:auto;background:white;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-    .msg-You{background:#bdf3fa;margin:12px 0;padding:12px;border-radius:8px;text-align:right;}
-    .msg-AI{background:#ecebfd;margin:12px 0;padding:12px;border-radius:8px;}
-    .sender{font-weight:bold;margin-bottom:4px;}
-    .timestamp{font-size:0.8em;color:#999;margin-top:4px;}
-    .attachments{margin-top:20px;padding-top:20px;border-top:1px solid #ccc;}
-    </style></head><body>`;
-
-  if (opts.headerImg) html += `<img src="${opts.headerImg}" style="width:100%;max-height:120px;border-radius:8px;margin-bottom:20px;">`;
-  
-  html += `<div class="chat-container">`;
-  
-  chat.forEach(m => {
-    html += `<div class="msg-${m.sender === userName ? 'You' : 'AI'}">
-      <div class="sender">${m.sender}</div>
-      <div class="text">${m.messageHTML}</div>
-      ${m.timestamp ? `<div class="timestamp">${m.timestamp}</div>` : ""}
-    </div>`;
-  });
-
-  if (attachments.length)
-    html += `<div class="attachments"><strong>Attachments:</strong><ul>${attachments.map(a=>`<li><a href="${a.url}" download="${a.name}">${a.name}</a></li>`).join("")}</ul></div>`;
-  
-  html += `</div>`;
-  
-  if (opts.footerImg) html += `<img src="${opts.footerImg}" style="width:100%;max-height:120px;border-radius:8px;margin-top:20px;">`;
-  
-  html += `</body></html>`;
-  return html;
-}
-
-// Build Markdown export
-function buildMarkdown(chat) {
-  let md = `# Capital Sin Export\n\n`;
-  md += `**Exported:** ${new Date().toLocaleString()}\n\n`;
-  
-  chat.forEach((m) => {
-    md += `**${m.sender}:**\n${m.messageMD}\n${m.timestamp ? `_(${m.timestamp})_` : ""} \n\n`;
-  });
-  
-  if (attachments.length)
-    md += `\n## Attachments\n${attachments.map(a=>`- [${a.name}](${a.url})`).join("\n")}\n`;
-  
-  return md;
-}
-
 // Download utility
 function downloadFile(name, type, data) {
   const blob = new Blob([data], { type });
@@ -217,7 +166,7 @@ document.getElementById('to-notion').onclick = () => {
       setStatus("✗ Please enter Notion integration token");
       return;
     }
-    sendToNotion(token, db, buildMarkdown(applyEdits(c)), (ok,msg) => 
+    sendToNotion(token, db, PaglaCaptureCore.formatMarkdown(buildNormalizedCapture(c)), (ok,msg) => 
       setStatus(ok?"✓ Exported to Notion":("✗ "+(msg||"Error")))
     );
   });
