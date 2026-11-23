@@ -164,15 +164,16 @@
         }
         return "";
       }).join("");
-      return '<article class="message"><header><strong>' + escapeHTML(roleLabel(m)) +
-        "</strong>" + (m.timestamp ? '<time>' + escapeHTML(m.timestamp) + "</time>" : "") +
-        "</header>" + (body || "<p>" + escapeHTML(m.text) + "</p>") + "</article>";
+      return "<article><h2>" + escapeHTML(roleLabel(m)) + "</h2>" +
+        (m.timestamp ? "<time>" + escapeHTML(m.timestamp) + "</time>" : "") +
+        (body || "<p>" + escapeHTML(m.text) + "</p>") + "</article>";
     }).join("\n");
     return "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" +
       escapeHTML(c.source.title || "Conversation capture") +
-      "</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:48rem;margin:2rem auto;padding:0 1rem;color:#0A0A0B;background:#fff}article{padding:1rem 0;border-bottom:1px solid #E8E8E6}header{display:flex;justify-content:space-between;gap:1rem}time{color:#6B707E;font-size:.875rem}pre{overflow:auto;background:#F5F5F3;padding:1rem}</style></head><body><h1>" +
-      escapeHTML(c.source.title || "Conversation capture") + "</h1><p>Platform: " + escapeHTML(c.source.platformId) +
-      " · Completeness: " + escapeHTML(c.completeness.status) + "</p>" + messages + "</body></html>";
+      "</title></head><body><main><h1>" + escapeHTML(c.source.title || "Conversation capture") +
+      "</h1><p>Platform: " + escapeHTML(c.source.platformId) +
+      " · Completeness: " + escapeHTML(c.completeness.status) + "</p>" + messages +
+      "</main></body></html>";
   }
 
   function formatCSV(capture) {
