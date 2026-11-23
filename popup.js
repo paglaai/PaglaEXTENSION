@@ -1,4 +1,4 @@
-// Capital Sin - Popup Logic
+// PaglaEXTENSION - Popup Logic
 
 let chat = [];
 let aiName = "AI", userName = "You";
@@ -19,6 +19,7 @@ function fetchChat(cb) {
       console.error("No active tab found.");
       return setStatus("Error: No active tab found.");
     }
+    window.__paglaActiveTab = { id: tabs[0].id, url: tabs[0].url || "", title: tabs[0].title || "" };
     console.log("Sending extract_chat message to tab:", tabs[0].id);
     chrome.tabs.sendMessage(tabs[0].id, {action: "extract_chat"}, response => {
       if (chrome.runtime.lastError) {
@@ -26,8 +27,9 @@ function fetchChat(cb) {
         return setStatus("Error: " + chrome.runtime.lastError.message);
       }
       if (response && response.chat && response.chat.length > 0) {
-        console.log("Successfully extracted chat with", response.chat.length, "messages.");
+        console.log("Extracted", response.chat.length, "messages; legacy speaker labels remain unverified.");
         chat = response.chat;
+        window.__paglaCapture = response.capture || null;
         cb(chat);
       } else {
         console.warn("No chat messages extracted or invalid response:", response);
@@ -53,107 +55,65 @@ document.getElementById('attach-file').onchange = e => {
   setStatus(`Attached ${e.target.files.length} file(s)`);
 };
 
-// Build HTML export
-function buildHTML(chat, opts={}) {
-  let html = `<html><head><meta charset="UTF-8"><title>Capital Sin Export</title>
-    <style>
-    body{font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;}
-    .chat-container{max-width:800px;margin:auto;background:white;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-    .msg-You{background:#bdf3fa;margin:12px 0;padding:12px;border-radius:8px;text-align:right;}
-    .msg-AI{background:#ecebfd;margin:12px 0;padding:12px;border-radius:8px;}
-    .sender{font-weight:bold;margin-bottom:4px;}
-    .timestamp{font-size:0.8em;color:#999;margin-top:4px;}
-    .attachments{margin-top:20px;padding-top:20px;border-top:1px solid #ccc;}
-    </style></head><body>`;
-
-  if (opts.headerImg) html += `<img src="${opts.headerImg}" style="width:100%;max-height:120px;border-radius:8px;margin-bottom:20px;">`;
-  
-  html += `<div class="chat-container">`;
-  
-  chat.forEach(m => {
-    html += `<div class="msg-${m.sender === userName ? 'You' : 'AI'}">
-      <div class="sender">${m.sender}</div>
-      <div class="text">${m.messageHTML}</div>
-      ${m.timestamp ? `<div class="timestamp">${m.timestamp}</div>` : ""}
-    </div>`;
-  });
-
-  if (attachments.length)
-    html += `<div class="attachments"><strong>Attachments:</strong><ul>${attachments.map(a=>`<li><a href="${a.url}" download="${a.name}">${a.name}</a></li>`).join("")}</ul></div>`;
-  
-  html += `</div>`;
-  
-  if (opts.footerImg) html += `<img src="${opts.footerImg}" style="width:100%;max-height:120px;border-radius:8px;margin-top:20px;">`;
-  
-  html += `</body></html>`;
-  return html;
-}
-
-// Build Markdown export
-function buildMarkdown(chat) {
-  let md = `# Capital Sin Export\n\n`;
-  md += `**Exported:** ${new Date().toLocaleString()}\n\n`;
-  
-  chat.forEach((m) => {
-    md += `**${m.sender}:**\n${m.messageMD}\n${m.timestamp ? `_(${m.timestamp})_` : ""} \n\n`;
-  });
-  
-  if (attachments.length)
-    md += `\n## Attachments\n${attachments.map(a=>`- [${a.name}](${a.url})`).join("\n")}\n`;
-  
-  return md;
-}
-
 // Download utility
 function downloadFile(name, type, data) {
-  const blob = new Blob([data], {type});
+  const blob = new Blob([data], { type });
   const url = URL.createObjectURL(blob);
-  chrome.downloads.download({ url, filename: name });
+  chrome.downloads.download({ url, filename: name, saveAs: true }, () => {
+    if (chrome.runtime.lastError) setStatus('Download failed: ' + chrome.runtime.lastError.message);
+    window.setTimeout(() => URL.revokeObjectURL(url), 30000);
+  });
 }
 
-// Export handlers
-document.getElementById('export-html').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    downloadFile('capitalsin-' + Date.now() + '.pdf', 'text/pdf', html);
-    setStatus('✓ HTML exported');
+// Build one canonical capture; every exporter consumes this same normalized record.
+function buildNormalizedCapture(rawChat) {
+  if (window.__paglaCapture) return PaglaCaptureCore.normalizeCapture(window.__paglaCapture);
+  const tab = window.__paglaActiveTab || {};
+  const host = (() => { try { return new URL(tab.url || "").hostname; } catch (_) { return "unknown"; } })();
+  return PaglaCaptureCore.normalizeCapture({
+    source: {
+      platformId: host || "unknown",
+      interfaceId: host || "unknown",
+      url: tab.url || "",
+      title: tab.title || "",
+      capturedAt: new Date().toISOString(),
+      adapterVersion: "legacy-adapter-unverified"
+    },
+    completeness: {
+      status: "unknown",
+      reasons: ["Legacy adapter capture completeness has not yet been verified."]
+    },
+    messages: rawChat.map((message, index) => ({
+      ...message,
+      role: "unknown",
+      authorLabel: "Unverified speaker",
+      roleConfidence: "unknown",
+      roleEvidence: "Legacy adapter role attribution has not been validated.",
+      sequence: index
+    }))
   });
+}
 
-document.getElementById('export-md').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const md = buildMarkdown(c_edited);
-    downloadFile('capitalsin-' + Date.now() + '.md', 'text/markdown', md);
-    setStatus('✓ Markdown exported');
+function exportCapture(format, extension, mimeType) {
+  fetchChat((rawChat) => {
+    try {
+      const capture = buildNormalizedCapture(rawChat);
+      const data = PaglaCaptureCore.serialize(capture, format);
+      downloadFile('paglaextension-' + Date.now() + '.' + extension, mimeType, data);
+      setStatus('Export prepared: ' + extension.toUpperCase());
+    } catch (error) {
+      console.error('Export failed:', error);
+      setStatus('Export failed: ' + error.message);
+    }
   });
+}
 
-document.getElementById('export-pdf').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-    iframe.contentDocument.open();
-    iframe.contentDocument.write(html);
-    iframe.contentDocument.close();
-    html2pdf().from(iframe.contentDocument.body).save('dirtychat-' + Date.now() + '.pdf');
-    setTimeout(()=>document.body.removeChild(iframe),2000);
-    setStatus('✓ PDF export triggered');
-  });
-
-document.getElementById('export-doc').onclick = () =>
-  fetchChat(c => {
-    const c_edited = applyEdits(c);
-    const html = buildHTML(c_edited, {headerImg, footerImg});
-    const docContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta charset='utf-8'><title>Export DOC</title></head>
-      <body>${html}</body></html>`;
-    downloadFile('capitalsin-' + Date.now() + '.doc', 'application/msword', docContent);
-    setStatus('✓ DOC exported');
-  });
+// Multi-format serializers operate on the same normalized capture record.
+document.getElementById('export-html').onclick = () => exportCapture('html', 'html', 'text/html;charset=utf-8');
+document.getElementById('export-md').onclick = () => exportCapture('markdown', 'md', 'text/markdown;charset=utf-8');
+document.getElementById('export-json').onclick = () => exportCapture('json', 'json', 'application/json;charset=utf-8');
+document.getElementById('export-txt').onclick = () => exportCapture('text', 'txt', 'text/plain;charset=utf-8');
+document.getElementById('export-csv').onclick = () => exportCapture('csv', 'csv', 'text/csv;charset=utf-8');
 
 // Screenshot full page
 document.getElementById('screenshot-full').onclick = () => {
@@ -206,7 +166,7 @@ document.getElementById('to-notion').onclick = () => {
       setStatus("✗ Please enter Notion integration token");
       return;
     }
-    sendToNotion(token, db, buildMarkdown(applyEdits(c)), (ok,msg) => 
+    sendToNotion(token, db, PaglaCaptureCore.formatMarkdown(buildNormalizedCapture(c)), (ok,msg) => 
       setStatus(ok?"✓ Exported to Notion":("✗ "+(msg||"Error")))
     );
   });

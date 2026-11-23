@@ -1,0 +1,46 @@
+name: Capture Core Tests
+
+on:
+  push:
+    branches:
+      - master
+      - "build/**"
+    paths:
+      - "capture-core.js"
+      - "content.js"
+      - "popup.js"
+      - "manifest.json"
+      - "tests/**"
+      - ".github/workflows/capture-core.yml"
+  pull_request:
+    paths:
+      - "capture-core.js"
+      - "content.js"
+      - "popup.js"
+      - "manifest.json"
+      - "tests/**"
+      - ".github/workflows/capture-core.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  capture-core:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate JavaScript syntax
+        run: |
+          node --check capture-core.js
+          node --check content.js
+          node --check popup.js
+          node --check background.js
+      - name: Validate extension manifest
+        run: node -e "JSON.parse(require('node:fs').readFileSync('manifest.json', 'utf8'))"
+      - name: Run capture core tests
+        run: node --test tests/capture-core.test.cjs

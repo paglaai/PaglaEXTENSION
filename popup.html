@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Capital Sin</title>
+  <title>PaglaEXTENSION</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Capital Sin</h2>
+  <h2>PaglaEXTENSION</h2>
   
   <!-- Participant Customization -->
   <section>
     <h3>Customize Participants</h3>
     <label>AI Name: <input id="ai-name" value="AI"></label>
     <label>AI Avatar: <input type="file" id="ai-img" accept="image/*"></label>
-    
     <label>Your Name: <input id="user-name" value="You"></label>
     <label>Your Avatar: <input type="file" id="user-img" accept="image/*"></label>
   </section>
@@ -34,9 +33,11 @@
     <div class="button-grid">
       <button id="export-html">HTML</button>
       <button id="export-md">Markdown</button>
-      <button id="export-pdf">PDF</button>
-      <button id="export-doc">Word (.doc)</button>
+      <button id="export-json">JSON</button>
+      <button id="export-txt">Plain text</button>
+      <button id="export-csv">CSV</button>
     </div>
+    <p>PDF and DOCX are not enabled yet; exports will not be given misleading file extensions.</p>
   </section>
 
   <!-- Cloud Export -->
@@ -52,10 +53,10 @@
   <!-- Screenshots -->
   <section>
     <h3>Screenshot</h3>
-    <button id="screenshot-full">Screenshot (Full Page)</button>
+    <button id="screenshot-full">Screenshot (Visible Tab)</button>
   </section>
   
-  <!-- AI Agent (Gemini) -->
+  <!-- AI Agent (Gemini, legacy optional integration) -->
   <section>
     <details>
       <summary>AI Agent (Gemini, optional)</summary>
@@ -82,12 +83,9 @@
     </details>
   </section>
   
-  <!-- Status -->
-  <section>
-    <div id="status"></div>
-  </section>
+  <section><div id="status" role="status" aria-live="polite"></div></section>
   
-  <script src="libs/html2pdf.bundle.min.js"></script>
+  <script src="capture-core.js"></script>
   <script src="notion_api.js"></script>
   <script src="popup.js"></script>
 </body>
