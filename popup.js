@@ -19,6 +19,7 @@ function fetchChat(cb) {
       console.error("No active tab found.");
       return setStatus("Error: No active tab found.");
     }
+    window.__paglaActiveTab = { id: tabs[0].id, url: tabs[0].url || "", title: tabs[0].title || "" };
     console.log("Sending extract_chat message to tab:", tabs[0].id);
     chrome.tabs.sendMessage(tabs[0].id, {action: "extract_chat"}, response => {
       if (chrome.runtime.lastError) {
