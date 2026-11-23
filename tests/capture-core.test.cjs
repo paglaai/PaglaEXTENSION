@@ -7,7 +7,7 @@ test("normalizes messages into a versioned schema and keeps unknown roles unknow
     id: "cap-1",
     source: { platformId: "chatgpt", title: "Test" },
     messages: [
-      { sender: "AI", messageMD: "response" },
+      { sender: "AI", messageMD: "response", sequence: 1 },
       { role: "user", text: "question", sequence: 0, roleConfidence: "high", roleEvidence: "explicit author attribute" }
     ]
   });
